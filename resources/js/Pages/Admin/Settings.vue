@@ -2,40 +2,56 @@
 import { ref } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Save, Image as ImageIcon, Link as LinkIcon, Phone, FileText, Globe, Sparkles } from '@lucide/vue';
+import { Save, Palette, Building2, Phone, Image as ImageIcon, Sparkles } from '@lucide/vue';
 
 const props = defineProps({
-  settings: {
-    type: Object,
-    required: true
-  }
+  settings: { type: Object, required: true },
 });
 
-const currentTab = ref('site'); // Tab state: 'site', 'links', 'logo'
+const currentTab = ref('hospital');
 
 const form = useForm({
-  site_name: props.settings.site_name || '',
+  site_name: props.settings.site_name || 'RSU Medika Nusantara',
+  site_tagline: props.settings.site_tagline || '',
   site_description: props.settings.site_description || '',
   whatsapp_number: props.settings.whatsapp_number || '',
-  playstore_link: props.settings.playstore_link || '',
-  site_logo: null
+  emergency_phone: props.settings.emergency_phone || '',
+  phone: props.settings.phone || '',
+  email: props.settings.email || '',
+  address: props.settings.address || '',
+  maps_url: props.settings.maps_url || '',
+  working_hours: props.settings.working_hours || '',
+  theme_primary: props.settings.theme_primary || '#0D6E6E',
+  theme_dark: props.settings.theme_dark || '#0A3D4A',
+  theme_deep: props.settings.theme_deep || '#062832',
+  theme_cream: props.settings.theme_cream || '#F5F9F9',
+  theme_sand: props.settings.theme_sand || '#E6F2F2',
+  theme_gold: props.settings.theme_gold || '#D97706',
+  show_emergency_bar: props.settings.show_emergency_bar !== '0',
+  site_logo: null,
 });
 
 const logoPreview = ref(props.settings.site_logo_url || null);
-const isDragging = ref(false);
 
-const handleLogoChange = (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    form.site_logo = file;
-    logoPreview.value = URL.createObjectURL(file);
-  }
+const presets = [
+  { name: 'Medical Teal (Default)', primary: '#0D6E6E', dark: '#0A3D4A', deep: '#062832', cream: '#F5F9F9', sand: '#E6F2F2', gold: '#D97706' },
+  { name: 'Clinical Royal Blue', primary: '#1D4ED8', dark: '#1E3A8A', deep: '#0F172A', cream: '#F8FAFC', sand: '#EFF6FF', gold: '#0EA5E9' },
+  { name: 'Emerald Healthcare', primary: '#059669', dark: '#065F46', deep: '#022C22', cream: '#F4FBF7', sand: '#E6F6EE', gold: '#F59E0B' },
+  { name: 'Modern Slate Indigo', primary: '#4F46E5', dark: '#312E81', deep: '#1E1B4B', cream: '#F8FAFC', sand: '#EEF2FF', gold: '#EC4899' },
+];
+
+const applyPreset = (p) => {
+  form.theme_primary = p.primary;
+  form.theme_dark = p.dark;
+  form.theme_deep = p.deep;
+  form.theme_cream = p.cream;
+  form.theme_sand = p.sand;
+  form.theme_gold = p.gold;
 };
 
-const handleDrop = (e) => {
-  isDragging.value = false;
-  const file = e.dataTransfer.files[0];
-  if (file && file.type.startsWith('image/')) {
+const handleLogo = (e) => {
+  const file = e.target.files[0];
+  if (file) {
     form.site_logo = file;
     logoPreview.value = URL.createObjectURL(file);
   }
@@ -46,254 +62,175 @@ const submit = () => {
     forceFormData: true,
     preserveScroll: true,
     onSuccess: () => {
-      form.site_logo = null;
-    }
+      // Reload to apply updated :root CSS vars from server
+      window.location.reload();
+    },
   });
 };
 </script>
 
 <template>
-  <Head title="Pengaturan Butik — RÜYA" />
+  <Head title="Pengaturan RS & Theme Customizer" />
 
   <AdminLayout>
-    <div class="space-y-8 max-w-4xl">
-      <!-- Title -->
+    <div class="space-y-6 max-w-4xl">
       <div>
-        <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-brand-leaf mb-1">
-          <Sparkles class="w-4 h-4 text-brand-gold" />
-          <span>Atelier Brand Configuration</span>
-        </div>
-        <h2 class="text-3xl font-serif font-bold tracking-tight text-brand-dark">Pengaturan Butik & Sistem</h2>
-        <p class="text-sm text-brand-leaf/80 mt-1">Kelola identitas resmi RÜYA, nomor WhatsApp pemesanan, dan aset visual.</p>
+        <h1 class="text-2xl font-extrabold text-brand-dark flex items-center gap-2">
+          <Palette class="w-6 h-6 text-brand-primary" />
+          Pengaturan Rumah Sakit & Theme Customizer
+        </h1>
+        <p class="text-sm text-brand-leaf mt-1">Ubah identitas rumah sakit, nomor IGD/WhatsApp, logo, serta warna tema website secara real-time tanpa mengubah kode.</p>
       </div>
 
-      <!-- Navigation Tabs (Haute Style) -->
-      <div class="flex border-b border-brand-sand">
-        <button 
-          @click="currentTab = 'site'"
-          :class="[
-            currentTab === 'site' 
-              ? 'border-brand-dark text-brand-dark bg-brand-sand/30 font-bold' 
-              : 'border-transparent text-brand-leaf/70 hover:text-brand-dark hover:border-brand-sand font-medium',
-            'px-6 py-3.5 border-b-2 text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer rounded-t-xl'
-          ]"
-        >
-          <span class="flex items-center gap-2">
-            <Globe class="w-4 h-4" />
-            Identitas Brand
-          </span>
+      <!-- Tabs -->
+      <div class="flex flex-wrap gap-2 border-b border-brand-sand">
+        <button @click="currentTab = 'hospital'" :class="[currentTab === 'hospital' ? 'border-brand-primary text-brand-primary font-bold' : 'border-transparent text-brand-leaf', 'px-5 py-3 border-b-2 text-sm inline-flex items-center gap-2']">
+          <Building2 class="w-4 h-4" /> Identitas & Kontak RS
         </button>
-        <button 
-          @click="currentTab = 'links'"
-          :class="[
-            currentTab === 'links' 
-              ? 'border-brand-dark text-brand-dark bg-brand-sand/30 font-bold' 
-              : 'border-transparent text-brand-leaf/70 hover:text-brand-dark hover:border-brand-sand font-medium',
-            'px-6 py-3.5 border-b-2 text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer rounded-t-xl'
-          ]"
-        >
-          <span class="flex items-center gap-2">
-            <LinkIcon class="w-4 h-4" />
-            WhatsApp & Kontak
-          </span>
+        <button @click="currentTab = 'theme'" :class="[currentTab === 'theme' ? 'border-brand-primary text-brand-primary font-bold' : 'border-transparent text-brand-leaf', 'px-5 py-3 border-b-2 text-sm inline-flex items-center gap-2']">
+          <Sparkles class="w-4 h-4" /> Customizer Warna & Tampilan
         </button>
-        <button 
-          @click="currentTab = 'logo'"
-          :class="[
-            currentTab === 'logo' 
-              ? 'border-brand-dark text-brand-dark bg-brand-sand/30 font-bold' 
-              : 'border-transparent text-brand-leaf/70 hover:text-brand-dark hover:border-brand-sand font-medium',
-            'px-6 py-3.5 border-b-2 text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer rounded-t-xl'
-          ]"
-        >
-          <span class="flex items-center gap-2">
-            <ImageIcon class="w-4 h-4" />
-            Logo Monogram
-          </span>
+        <button @click="currentTab = 'logo'" :class="[currentTab === 'logo' ? 'border-brand-primary text-brand-primary font-bold' : 'border-transparent text-brand-leaf', 'px-5 py-3 border-b-2 text-sm inline-flex items-center gap-2']">
+          <ImageIcon class="w-4 h-4" /> Logo Resmi RS
         </button>
       </div>
 
-      <!-- Settings Card -->
-      <form @submit.prevent="submit" class="bg-white border border-brand-sand/80 rounded-3xl overflow-hidden shadow-fashion">
-        <div class="p-6 md:p-8">
-          
-          <!-- Tab 1: Identitas Brand -->
-          <div v-if="currentTab === 'site'" class="space-y-6 animate-fadeIn">
-            <!-- Site Name -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-              <label for="site_name" class="text-xs font-bold text-brand-dark/80 uppercase tracking-wider">Nama Brand / Website</label>
-              <div class="md:col-span-2 relative">
-                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brand-leaf/60">
-                  <FileText class="w-4 h-4" />
-                </span>
-                <input 
-                  id="site_name"
-                  v-model="form.site_name"
-                  type="text" 
-                  class="w-full bg-brand-cream/70 border border-brand-sand rounded-xl pl-10 pr-4 py-2.5 text-sm text-brand-dark placeholder-brand-leaf/40 focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/15 transition-all duration-200"
-                  placeholder="Contoh: RÜYA Modest Wear"
-                />
-                <div v-if="form.errors.site_name" class="text-xs text-rose-600 font-semibold mt-1">
-                  {{ form.errors.site_name }}
-                </div>
-              </div>
-            </div>
-
-            <!-- Site Description -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-              <div>
-                <label for="site_description" class="text-xs font-bold text-brand-dark/80 uppercase tracking-wider">Filosofi & Deskripsi Singkat</label>
-                <p class="text-xxs text-brand-leaf/70 mt-1">Teks editorial yang tampil di footer dan meta informasi brand RÜYA.</p>
-              </div>
-              <div class="md:col-span-2">
-                <textarea 
-                  id="site_description"
-                  v-model="form.site_description"
-                  rows="5"
-                  class="w-full bg-brand-cream/70 border border-brand-sand rounded-xl px-4 py-2.5 text-sm text-brand-dark placeholder-brand-leaf/40 focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/15 transition-all duration-200 resize-none"
-                  placeholder="Tulis deskripsi atau filosofi brand..."
-                ></textarea>
-                <div v-if="form.errors.site_description" class="text-xs text-rose-600 font-semibold mt-1">
-                  {{ form.errors.site_description }}
-                </div>
-              </div>
-            </div>
+      <form @submit.prevent="submit" class="bg-white rounded-3xl border border-brand-sand p-6 sm:p-8 shadow-sm space-y-6">
+        <!-- Tab 1: Hospital Info -->
+        <div v-show="currentTab === 'hospital'" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold uppercase text-brand-leaf mb-1">Nama Rumah Sakit *</label>
+            <input v-model="form.site_name" type="text" required class="w-full rounded-xl border-brand-sand text-sm" />
           </div>
-
-          <!-- Tab 2: WhatsApp & Kontak -->
-          <div v-if="currentTab === 'links'" class="space-y-6 animate-fadeIn">
-            <!-- Whatsapp Number -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-              <div>
-                <label for="whatsapp_number" class="text-xs font-bold text-brand-dark/80 uppercase tracking-wider">WhatsApp Personal Shopper</label>
-                <p class="text-xxs text-brand-leaf/70 mt-1">Gunakan format internasional tanpa spasi atau tanda plus, contoh: 6281316053870</p>
-              </div>
-              <div class="md:col-span-2 relative">
-                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brand-leaf/60">
-                  <Phone class="w-4 h-4" />
-                </span>
-                <input 
-                  id="whatsapp_number"
-                  v-model="form.whatsapp_number"
-                  type="text" 
-                  class="w-full bg-brand-cream/70 border border-brand-sand rounded-xl pl-10 pr-4 py-2.5 text-sm text-brand-dark placeholder-brand-leaf/40 focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/15 transition-all duration-200"
-                  placeholder="6281316053870"
-                />
-                <div v-if="form.errors.whatsapp_number" class="text-xs text-rose-600 font-semibold mt-1">
-                  {{ form.errors.whatsapp_number }}
-                </div>
-              </div>
-            </div>
-
-            <!-- Play Store or Catalog Link -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-              <div>
-                <label for="playstore_link" class="text-xs font-bold text-brand-dark/80 uppercase tracking-wider">Tautan Lookbook Eksternal</label>
-                <p class="text-xxs text-brand-leaf/70 mt-1">URL tautan Instagram, e-katalog, atau link pendukung lainnya.</p>
-              </div>
-              <div class="md:col-span-2 relative">
-                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brand-leaf/60">
-                  <LinkIcon class="w-4 h-4" />
-                </span>
-                <input 
-                  id="playstore_link"
-                  v-model="form.playstore_link"
-                  type="url" 
-                  class="w-full bg-brand-cream/70 border border-brand-sand rounded-xl pl-10 pr-4 py-2.5 text-sm text-brand-dark placeholder-brand-leaf/40 focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/15 transition-all duration-200"
-                  placeholder="https://instagram.com/ruya.couture"
-                />
-                <div v-if="form.errors.playstore_link" class="text-xs text-rose-600 font-semibold mt-1">
-                  {{ form.errors.playstore_link }}
-                </div>
-              </div>
-            </div>
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold uppercase text-brand-leaf mb-1">Tagline</label>
+            <input v-model="form.site_tagline" type="text" class="w-full rounded-xl border-brand-sand text-sm" />
           </div>
-
-          <!-- Tab 3: Logo Monogram -->
-          <div v-if="currentTab === 'logo'" class="space-y-6 animate-fadeIn">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-              <div>
-                <h3 class="text-xs font-bold text-brand-dark/80 uppercase tracking-wider">Monogram & Stamp Resmi</h3>
-                <p class="text-xxs text-brand-leaf/70 mt-1">Logo resmi brand RÜYA. Format yang disarankan adalah PNG dengan latar belakang transparan beresolusi tinggi.</p>
-              </div>
-
-              <div class="md:col-span-2 space-y-6">
-                <!-- Advanced Dashed Drag-and-Drop Area -->
-                <div 
-                  @dragover.prevent="isDragging = true"
-                  @dragleave.prevent="isDragging = false"
-                  @drop.prevent="handleDrop"
-                  :class="[
-                    isDragging ? 'border-brand-primary bg-brand-sand/40' : 'border-brand-sand bg-brand-cream/40 hover:border-brand-primary/60',
-                    'border-2 border-dashed rounded-3xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-300 relative min-h-[220px]'
-                  ]"
-                >
-                  <input 
-                    id="site_logo"
-                    type="file" 
-                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
-                    accept="image/*"
-                    @change="handleLogoChange"
-                  />
-
-                  <!-- Dynamic Icon/Preview -->
-                  <div v-if="logoPreview" class="relative group max-w-[200px] max-h-[140px] rounded-2xl overflow-hidden p-2 bg-white border border-brand-sand shadow-sm">
-                    <img 
-                      :src="logoPreview" 
-                      alt="Site Logo Preview" 
-                      class="max-w-full max-h-full object-contain"
-                    />
-                  </div>
-                  <div v-else class="flex flex-col items-center gap-3">
-                    <div class="p-4 bg-brand-sand/60 rounded-2xl text-brand-dark border border-brand-blush/60 shadow-sm">
-                      <ImageIcon class="w-8 h-8 text-brand-leaf" />
-                    </div>
-                    <div>
-                      <p class="text-sm font-semibold text-brand-dark">Drag & drop logo stempel RÜYA di sini</p>
-                      <p class="text-xs text-brand-leaf/70 mt-1">atau klik untuk memilih dari penyimpanan komputer</p>
-                    </div>
-                  </div>
-                </div>
-
-                <p class="text-xxs text-brand-leaf/60">Maksimal ukuran berkas 2 MB (Format disarankan: PNG transparan)</p>
-                <div v-if="form.errors.site_logo" class="text-xs text-rose-600 font-semibold mt-1">
-                  {{ form.errors.site_logo }}
-                </div>
-              </div>
-            </div>
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold uppercase text-brand-leaf mb-1">Deskripsi Singkat (SEO)</label>
+            <textarea v-model="form.site_description" rows="2" class="w-full rounded-xl border-brand-sand text-sm"></textarea>
           </div>
-
+          <div>
+            <label class="block text-xs font-bold uppercase text-brand-leaf mb-1">Nomor WhatsApp (628xxx)</label>
+            <input v-model="form.whatsapp_number" type="text" class="w-full rounded-xl border-brand-sand text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-brand-leaf mb-1">Hotline IGD 24 Jam</label>
+            <input v-model="form.emergency_phone" type="text" class="w-full rounded-xl border-brand-sand text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-brand-leaf mb-1">Telepon Informasi</label>
+            <input v-model="form.phone" type="text" class="w-full rounded-xl border-brand-sand text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-brand-leaf mb-1">Email Resmi</label>
+            <input v-model="form.email" type="email" class="w-full rounded-xl border-brand-sand text-sm" />
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold uppercase text-brand-leaf mb-1">Jam Operasional</label>
+            <input v-model="form.working_hours" type="text" class="w-full rounded-xl border-brand-sand text-sm" />
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold uppercase text-brand-leaf mb-1">Alamat Lengkap</label>
+            <textarea v-model="form.address" rows="2" class="w-full rounded-xl border-brand-sand text-sm"></textarea>
+          </div>
         </div>
 
-        <!-- Footer Action -->
-        <div class="px-6 md:px-8 py-4 bg-brand-sand/20 border-t border-brand-sand flex justify-end">
-          <button 
-            type="submit" 
+        <!-- Tab 2: Theme Customizer -->
+        <div v-show="currentTab === 'theme'" class="space-y-6">
+          <div>
+            <label class="block text-xs font-bold uppercase text-brand-leaf mb-2">Preset Palet Warna Rumah Sakit</label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <button
+                v-for="p in presets"
+                :key="p.name"
+                type="button"
+                @click="applyPreset(p)"
+                class="flex items-center justify-between p-3.5 rounded-xl border border-brand-sand hover:border-brand-primary bg-brand-cream/40 text-left transition-all"
+              >
+                <span class="text-xs font-bold text-brand-dark">{{ p.name }}</span>
+                <div class="flex items-center gap-1">
+                  <span class="w-4 h-4 rounded-full border border-white shadow-sm" :style="{ background: p.primary }"></span>
+                  <span class="w-4 h-4 rounded-full border border-white shadow-sm" :style="{ background: p.dark }"></span>
+                  <span class="w-4 h-4 rounded-full border border-white shadow-sm" :style="{ background: p.gold }"></span>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div class="p-3 rounded-xl border border-brand-sand bg-brand-cream/30">
+              <label class="block text-xs font-bold text-brand-dark mb-1">Warna Utama (Primary)</label>
+              <div class="flex items-center gap-2">
+                <input type="color" v-model="form.theme_primary" class="w-10 h-10 rounded cursor-pointer border-0" />
+                <input type="text" v-model="form.theme_primary" class="w-full rounded-lg border-brand-sand text-xs font-mono" />
+              </div>
+            </div>
+            <div class="p-3 rounded-xl border border-brand-sand bg-brand-cream/30">
+              <label class="block text-xs font-bold text-brand-dark mb-1">Warna Teks / Heading</label>
+              <div class="flex items-center gap-2">
+                <input type="color" v-model="form.theme_dark" class="w-10 h-10 rounded cursor-pointer border-0" />
+                <input type="text" v-model="form.theme_dark" class="w-full rounded-lg border-brand-sand text-xs font-mono" />
+              </div>
+            </div>
+            <div class="p-3 rounded-xl border border-brand-sand bg-brand-cream/30">
+              <label class="block text-xs font-bold text-brand-dark mb-1">Header / Footer Gelap</label>
+              <div class="flex items-center gap-2">
+                <input type="color" v-model="form.theme_deep" class="w-10 h-10 rounded cursor-pointer border-0" />
+                <input type="text" v-model="form.theme_deep" class="w-full rounded-lg border-brand-sand text-xs font-mono" />
+              </div>
+            </div>
+            <div class="p-3 rounded-xl border border-brand-sand bg-brand-cream/30">
+              <label class="block text-xs font-bold text-brand-dark mb-1">Background Halaman</label>
+              <div class="flex items-center gap-2">
+                <input type="color" v-model="form.theme_cream" class="w-10 h-10 rounded cursor-pointer border-0" />
+                <input type="text" v-model="form.theme_cream" class="w-full rounded-lg border-brand-sand text-xs font-mono" />
+              </div>
+            </div>
+            <div class="p-3 rounded-xl border border-brand-sand bg-brand-cream/30">
+              <label class="block text-xs font-bold text-brand-dark mb-1">Surface / Card Tint</label>
+              <div class="flex items-center gap-2">
+                <input type="color" v-model="form.theme_sand" class="w-10 h-10 rounded cursor-pointer border-0" />
+                <input type="text" v-model="form.theme_sand" class="w-full rounded-lg border-brand-sand text-xs font-mono" />
+              </div>
+            </div>
+            <div class="p-3 rounded-xl border border-brand-sand bg-brand-cream/30">
+              <label class="block text-xs font-bold text-brand-dark mb-1">Warna Aksen</label>
+              <div class="flex items-center gap-2">
+                <input type="color" v-model="form.theme_gold" class="w-10 h-10 rounded cursor-pointer border-0" />
+                <input type="text" v-model="form.theme_gold" class="w-full rounded-lg border-brand-sand text-xs font-mono" />
+              </div>
+            </div>
+          </div>
+
+          <label class="inline-flex items-center gap-2.5 text-sm font-semibold text-brand-dark">
+            <input type="checkbox" v-model="form.show_emergency_bar" class="rounded border-brand-sand text-brand-primary" />
+            <span>Tampilkan Bar Darurat IGD 24 Jam di bagian paling atas website</span>
+          </label>
+        </div>
+
+        <!-- Tab 3: Logo -->
+        <div v-show="currentTab === 'logo'" class="space-y-4">
+          <div v-if="logoPreview" class="p-4 rounded-2xl bg-brand-cream border border-brand-sand inline-block">
+            <img :src="logoPreview" alt="Preview Logo" class="h-20 w-auto object-contain" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-brand-leaf mb-1">Upload Logo Baru (PNG/JPG/SVG)</label>
+            <input type="file" accept="image/*" @change="handleLogo" class="text-sm" />
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-brand-sand flex justify-end">
+          <button
+            type="submit"
             :disabled="form.processing"
-            class="inline-flex items-center px-6 py-2.5 bg-brand-dark hover:bg-brand-deep border border-brand-gold/30 disabled:opacity-50 text-xs font-semibold uppercase tracking-widest text-brand-cream rounded-xl shadow-md transition-all duration-200 cursor-pointer"
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-primary hover:bg-brand-dark text-white text-sm font-bold shadow-sm transition-colors"
           >
-            <Save class="w-4 h-4 mr-2 text-brand-gold" />
-            Simpan Perubahan
+            <Save class="w-4 h-4" />
+            <span>{{ form.processing ? 'Menyimpan...' : 'Simpan Pengaturan & Tema' }}</span>
           </button>
         </div>
       </form>
     </div>
   </AdminLayout>
 </template>
-
-<style scoped>
-.animate-fadeIn {
-  animation: fadeIn 0.25s ease-out forwards;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-</style>

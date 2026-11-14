@@ -1,162 +1,73 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { computed } from 'vue';
+import { Head, usePage, Link } from '@inertiajs/vue3';
 import HeaderNavbar from '@/Components/Frontend/HeaderNavbar.vue';
 import FooterSection from '@/Components/Frontend/FooterSection.vue';
 import FloatingWhatsapp from '@/Components/Frontend/FloatingWhatsapp.vue';
-import { MapPin, Phone, Mail, Clock, MessageSquare, Sparkles } from 'lucide-vue-next';
+import { MapPin, Phone, Mail, Clock, Ambulance, CalendarCheck } from '@lucide/vue';
 
-const props = defineProps({
-    contactInfo: {
-        type: Object,
-        default: () => ({
-            brand_name: 'RÜYA',
-            phone: '+62 813-1605-3870',
-            whatsapp_number: '6281316053870',
-            workshop_address: 'RÜYA Boutique Studio, Jalan Kemang Raya No. 42B, Jakarta Selatan',
-            maps_url: 'https://demo.hasanarofid.site',
-            working_hours: 'Senin - Sabtu: 09.00 - 20.00 WIB'
-        })
-    }
-});
-
-const name = ref('');
-const email = ref('');
-const message = ref('');
-
-const sendMessage = () => {
-    const text = `Halo RÜYA Concierge,\nNama: ${name.value}\nEmail: ${email.value}\nPesan: ${message.value}`;
-    window.open(`https://wa.me/${props.contactInfo.whatsapp_number}?text=${encodeURIComponent(text)}`, '_blank');
-};
+const page = usePage();
+const settings = computed(() => page.props.siteSettings || {});
 </script>
 
 <template>
-    <Head title="Butik & Layanan Konsultasi - RÜYA" />
+  <Head title="Kontak & Lokasi Rumah Sakit" />
 
-    <div class="min-h-screen bg-brand-cream text-brand-dark font-sans antialiased">
-        <HeaderNavbar />
+  <div class="min-h-screen bg-brand-cream text-brand-dark font-sans flex flex-col">
+    <HeaderNavbar />
 
-        <main class="pt-32 pb-24">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
-                
-                <div class="max-w-3xl space-y-3">
-                    <span class="text-xs font-bold uppercase tracking-widest text-brand-dark">
-                        Butik & Konsultasi Busana
-                    </span>
-                    <h1 class="font-serif text-4xl sm:text-5xl font-bold text-brand-dark leading-tight">
-                        Kunjungi Studio Kami atau Hubungi Personal Shopper.
-                    </h1>
-                    <p class="text-base text-brand-dark/80">
-                        Kami siap mendengarkan preferensi busana Anda, memberikan saran ukuran jahit, dan memastikan pengalaman berbelanja terbaik.
-                    </p>
-                </div>
+    <section class="bg-brand-deep text-white py-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-2">
+        <h1 class="text-3xl sm:text-4xl font-extrabold">Hubungi & Kunjungi Kami</h1>
+        <p class="text-white/80 text-sm sm:text-base">Layanan informasi pasien, pengaduan mutu, serta akses darurat IGD 24 jam.</p>
+      </div>
+    </section>
 
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-                    
-                    <!-- Contact Cards (5 cols) -->
-                    <div class="lg:col-span-5 space-y-6">
-                        <div class="p-8 rounded-3xl bg-brand-sand/60 border border-brand-dark/15 space-y-6 shadow-sm">
-                            <h3 class="font-serif text-xl font-bold text-brand-dark">Studio & Jam Operasional</h3>
-                            
-                            <div class="space-y-4 text-xs text-brand-dark/80">
-                                <div class="flex items-start gap-3">
-                                    <MapPin class="w-5 h-5 text-brand-dark flex-shrink-0 mt-0.5" />
-                                    <div>
-                                        <div class="font-bold text-brand-dark">Alamat Butik:</div>
-                                        <div>{{ contactInfo.workshop_address }}</div>
-                                    </div>
-                                </div>
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="bg-white p-7 rounded-2xl border border-brand-sand shadow-sm space-y-4">
+          <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
+            <Ambulance class="w-6 h-6" />
+          </div>
+          <h2 class="text-lg font-bold text-brand-dark">IGD & Ambulans 24 Jam</h2>
+          <p class="text-sm text-brand-leaf">Untuk kondisi kegawatdaruratan medis, segera hubungi hotline darurat kami.</p>
+          <p class="text-2xl font-extrabold text-rose-600">{{ settings.emergency_phone || '(021) 500-911' }}</p>
+        </div>
 
-                                <div class="flex items-start gap-3">
-                                    <Clock class="w-5 h-5 text-brand-dark flex-shrink-0 mt-0.5" />
-                                    <div>
-                                        <div class="font-bold text-brand-dark">Jam Operasional:</div>
-                                        <div>{{ contactInfo.working_hours }}</div>
-                                    </div>
-                                </div>
+        <div class="bg-white p-7 rounded-2xl border border-brand-sand shadow-sm space-y-4">
+          <div class="w-12 h-12 rounded-xl bg-brand-sand text-brand-primary flex items-center justify-center">
+            <Phone class="w-6 h-6" />
+          </div>
+          <h2 class="text-lg font-bold text-brand-dark">Pusat Informasi & Pendaftaran</h2>
+          <p class="text-sm text-brand-leaf flex items-center gap-2"><Phone class="w-4 h-4 text-brand-primary" /> {{ settings.phone || '(021) 555-0199' }}</p>
+          <p class="text-sm text-brand-leaf flex items-center gap-2"><Mail class="w-4 h-4 text-brand-primary" /> {{ settings.email || 'info@medikanusantara.id' }}</p>
+          <p class="text-sm text-brand-leaf flex items-center gap-2"><Clock class="w-4 h-4 text-brand-primary" /> {{ settings.working_hours }}</p>
+        </div>
 
-                                <div class="flex items-start gap-3">
-                                    <Phone class="w-5 h-5 text-brand-dark flex-shrink-0 mt-0.5" />
-                                    <div>
-                                        <div class="font-bold text-brand-dark">WhatsApp Personal Shopper:</div>
-                                        <div>{{ contactInfo.phone }}</div>
-                                    </div>
-                                </div>
+        <div class="bg-white p-7 rounded-2xl border border-brand-sand shadow-sm space-y-4">
+          <div class="w-12 h-12 rounded-xl bg-brand-sand text-brand-primary flex items-center justify-center">
+            <MapPin class="w-6 h-6" />
+          </div>
+          <h2 class="text-lg font-bold text-brand-dark">Alamat Rumah Sakit</h2>
+          <p class="text-sm text-brand-leaf leading-relaxed">{{ settings.address }}</p>
+          <div class="pt-2 flex flex-wrap gap-2">
+            <a
+              v-if="settings.maps_url"
+              :href="settings.maps_url"
+              target="_blank"
+              class="px-4 py-2 rounded-xl bg-brand-primary text-white text-xs font-bold"
+            >
+              Buka Google Maps
+            </a>
+            <Link href="/janji-temu" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-brand-sand text-xs font-bold text-brand-dark">
+              <CalendarCheck class="w-3.5 h-3.5" /> Buat Janji Temu
+            </Link>
+          </div>
+        </div>
+      </div>
+    </main>
 
-                                <div class="flex items-start gap-3">
-                                    <Sparkles class="w-5 h-5 text-brand-dark flex-shrink-0 mt-0.5" />
-                                    <div>
-                                        <div class="font-bold text-brand-dark">Domain Demo:</div>
-                                        <div><a href="https://demo.hasanarofid.site" class="underline">demo.hasanarofid.site</a></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <a 
-                            :href="`https://wa.me/${contactInfo.whatsapp_number}?text=Halo%20R%C3%9CYA,%20saya%20ingin%20berkunjung%20ke%20butik.`" 
-                            target="_blank"
-                            class="w-full inline-flex items-center justify-center gap-3 py-4 px-6 rounded-2xl bg-brand-dark hover:bg-brand-primary text-brand-cream font-medium text-xs tracking-wider transition-colors shadow-md"
-                        >
-                            <MessageSquare class="w-4 h-4 text-brand-sand" />
-                            <span>Janji Temu via WhatsApp</span>
-                        </a>
-                    </div>
-
-                    <!-- Direct Form (7 cols) -->
-                    <div class="lg:col-span-7 p-8 sm:p-10 rounded-3xl bg-brand-cream border border-brand-dark/15 shadow-xl space-y-6">
-                        <h3 class="font-serif text-2xl font-bold text-brand-dark">Kirimkan Pertanyaan</h3>
-                        
-                        <form @submit.prevent="sendMessage" class="space-y-4">
-                            <div>
-                                <label class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1.5">Nama Anda</label>
-                                <input 
-                                    v-model="name"
-                                    type="text" 
-                                    required 
-                                    placeholder="Nama Lengkap" 
-                                    class="w-full px-4 py-3 rounded-xl bg-brand-sand/30 border border-brand-dark/20 text-xs text-brand-dark focus:ring-2 focus:ring-brand-dark outline-none"
-                                />
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1.5">Email / No. HP</label>
-                                <input 
-                                    v-model="email"
-                                    type="text" 
-                                    required 
-                                    placeholder="email@example.com atau 0812..." 
-                                    class="w-full px-4 py-3 rounded-xl bg-brand-sand/30 border border-brand-dark/20 text-xs text-brand-dark focus:ring-2 focus:ring-brand-dark outline-none"
-                                />
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1.5">Pesan Anda</label>
-                                <textarea 
-                                    v-model="message"
-                                    rows="4" 
-                                    required 
-                                    placeholder="Tuliskan pesan atau pertanyaan seputar koleksi busana kami..." 
-                                    class="w-full px-4 py-3 rounded-xl bg-brand-sand/30 border border-brand-dark/20 text-xs text-brand-dark focus:ring-2 focus:ring-brand-dark outline-none resize-none"
-                                ></textarea>
-                            </div>
-
-                            <button 
-                                type="submit"
-                                class="w-full py-4 px-6 rounded-xl bg-brand-dark hover:bg-brand-primary text-brand-cream font-medium text-xs tracking-wider transition-colors shadow-md flex items-center justify-center gap-2"
-                            >
-                                <MessageSquare class="w-4 h-4 text-brand-sand" />
-                                <span>Teruskan Pesan ke WhatsApp Butik</span>
-                            </button>
-                        </form>
-                    </div>
-
-                </div>
-
-            </div>
-        </main>
-
-        <FooterSection />
-        <FloatingWhatsapp />
-    </div>
+    <FooterSection />
+    <FloatingWhatsapp />
+  </div>
 </template>

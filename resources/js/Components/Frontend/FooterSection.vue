@@ -1,104 +1,99 @@
 <script setup>
-import { Link } from '@inertiajs/vue3';
-import { MessageSquare, Mail, MapPin, Instagram, Heart } from 'lucide-vue-next';
+import { computed } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import { MapPin, Phone, Mail, Clock, ShieldPlus, Ambulance } from '@lucide/vue';
 
-defineProps({
-    contactInfo: {
-        type: Object,
-        default: () => ({
-            brand_name: 'RÜYA',
-            phone: '+62 813-1605-3870',
-            whatsapp_number: '6281316053870',
-            workshop_address: 'RÜYA Boutique Studio, Jalan Kemang Raya No. 42B, Jakarta Selatan',
-            maps_url: 'https://demo.hasanarofid.site',
-            working_hours: 'Senin - Sabtu: 09.00 - 20.00 WIB'
-        })
-    }
-});
+const page = usePage();
+const settings = computed(() => page.props.siteSettings || {});
 </script>
 
 <template>
-    <footer class="bg-brand-deep text-brand-cream border-t border-brand-dark">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8">
-                
-                <!-- Brand Info (5 cols) -->
-                <div class="lg:col-span-5 space-y-6">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-xl bg-brand-sand p-1 border border-brand-cream/20 flex items-center justify-center">
-                            <img src="/images/ruya-logo.png" alt="RÜYA Logo" class="w-full h-full object-contain" />
-                        </div>
-                        <div>
-                            <span class="font-serif text-3xl font-bold tracking-widest text-brand-cream">
-                                RÜYA
-                            </span>
-                            <div class="text-[10px] tracking-[0.2em] uppercase text-brand-sand/80 font-medium">
-                                Haute Modest Wear
-                            </div>
-                        </div>
-                    </div>
-
-                    <p class="text-xs sm:text-sm text-brand-cream/80 max-w-sm leading-relaxed">
-                        Merek busana santun modern Indonesia yang memadukan filosofi keanggunan, bahan serat alam premium, dan potongan syar'i tanpa kompromi estetika.
-                    </p>
-
-                    <div class="text-xs text-brand-sand/70 space-y-1">
-                        <div>Host Demo: <a href="https://demo.hasanarofid.site" class="text-brand-sand underline hover:text-white">demo.hasanarofid.site</a></div>
-                        <div>WhatsApp Order: {{ contactInfo.phone }}</div>
-                    </div>
-                </div>
-
-                <!-- Nav Links (2 cols) -->
-                <div class="lg:col-span-2 space-y-4">
-                    <h4 class="font-serif text-sm font-bold tracking-wider uppercase text-brand-sand">Koleksi</h4>
-                    <ul class="space-y-2.5 text-xs text-brand-cream/80">
-                        <li><Link :href="route('products.index', { kategori: 'signature-abaya' })" class="hover:text-white transition-colors">Signature Abaya</Link></li>
-                        <li><Link :href="route('products.index', { kategori: 'silk-voile-hijab' })" class="hover:text-white transition-colors">Silk & Voile Hijab</Link></li>
-                        <li><Link :href="route('products.index', { kategori: 'ethereal-dresses' })" class="hover:text-white transition-colors">Ethereal Dresses</Link></li>
-                        <li><Link :href="route('products.index', { kategori: 'luxe-outerwear' })" class="hover:text-white transition-colors">Luxe Outerwear</Link></li>
-                        <li><Link :href="route('portfolios.index')" class="hover:text-white transition-colors">Lookbook 2026</Link></li>
-                    </ul>
-                </div>
-
-                <!-- Company (2 cols) -->
-                <div class="lg:col-span-2 space-y-4">
-                    <h4 class="font-serif text-sm font-bold tracking-wider uppercase text-brand-sand">Eksplorasi</h4>
-                    <ul class="space-y-2.5 text-xs text-brand-cream/80">
-                        <li><Link :href="route('home')" class="hover:text-white transition-colors">Beranda</Link></li>
-                        <li><a href="#about" class="hover:text-white transition-colors">Filosofi Busana</a></li>
-                        <li><Link :href="route('articles.index')" class="hover:text-white transition-colors">Journal & Styling</Link></li>
-                        <li><Link :href="route('contact.index')" class="hover:text-white transition-colors">Butik & Layanan</Link></li>
-                        <li><a href="/deploy.php" class="hover:text-brand-sand transition-colors font-mono text-[11px]">System Deployer</a></li>
-                    </ul>
-                </div>
-
-                <!-- Contact Info (3 cols) -->
-                <div class="lg:col-span-3 space-y-4">
-                    <h4 class="font-serif text-sm font-bold tracking-wider uppercase text-brand-sand">Butik & Kontak</h4>
-                    <div class="space-y-3 text-xs text-brand-cream/80">
-                        <div class="flex items-start gap-2.5">
-                            <MapPin class="w-4 h-4 text-brand-sand flex-shrink-0 mt-0.5" />
-                            <span>{{ contactInfo.workshop_address }}</span>
-                        </div>
-                        <div class="flex items-center gap-2.5">
-                            <MessageSquare class="w-4 h-4 text-brand-sand flex-shrink-0" />
-                            <a :href="`https://wa.me/${contactInfo.whatsapp_number}`" target="_blank" class="hover:underline">
-                                {{ contactInfo.phone }}
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
+  <footer class="bg-brand-deep text-white pt-16 pb-8 border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/10">
+        <!-- Brand Column -->
+        <div class="space-y-4">
+          <div class="flex items-center gap-3">
+            <img
+              v-if="settings.site_logo_url"
+              :src="settings.site_logo_url"
+              :alt="settings.site_name"
+              class="h-10 w-auto object-contain bg-white rounded-lg p-1"
+            />
+            <div v-else class="w-10 h-10 rounded-xl bg-brand-primary flex items-center justify-center">
+              <ShieldPlus class="w-6 h-6 text-white" />
             </div>
-
-            <!-- Bottom Copyright -->
-            <div class="mt-16 pt-8 border-t border-brand-sand/15 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-brand-cream/60">
-                <p>© 2026 RÜYA Modest Fashion. Seluruh Hak Cipta Dilindungi.</p>
-                <div class="flex items-center gap-1 text-[11px]">
-                    <span>Dibuat dengan rasa cinta & estetika modest</span>
-                    <Heart class="w-3.5 h-3.5 text-brand-sand" />
-                </div>
+            <div>
+              <h3 class="font-bold text-lg leading-tight">{{ settings.site_name || 'RSU Medika Nusantara' }}</h3>
+              <p class="text-xs text-white/60">Terakreditasi Paripurna</p>
             </div>
+          </div>
+          <p class="text-sm text-white/75 leading-relaxed">
+            {{ settings.site_description || 'Rumah sakit modern dengan layanan terpadu, dokter spesialis berpengalaman, dan fasilitas medis berstandar internasional.' }}
+          </p>
+          <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-rose-600/20 border border-rose-500/30 text-rose-200 text-xs font-semibold">
+            <Ambulance class="w-4 h-4 text-rose-400" />
+            <span>IGD 24 Jam: {{ settings.emergency_phone || '(021) 500-911' }}</span>
+          </div>
         </div>
-    </footer>
+
+        <!-- Layanan & Navigasi -->
+        <div>
+          <h4 class="text-sm font-bold uppercase tracking-wider text-white/90 mb-4">Layanan Pasien</h4>
+          <ul class="space-y-2.5 text-sm text-white/70">
+            <li><Link href="/janji-temu" class="hover:text-white transition-colors">Reservasi Janji Temu Online</Link></li>
+            <li><Link href="/dokter" class="hover:text-white transition-colors">Direktori & Jadwal Dokter</Link></li>
+            <li><Link href="/artikel" class="hover:text-white transition-colors">Artikel & Tips Kesehatan</Link></li>
+            <li><Link href="/karir" class="hover:text-white transition-colors">Portal Karir & Rekrutmen</Link></li>
+            <li><Link href="/kontak" class="hover:text-white transition-colors">Hubungi Kami</Link></li>
+          </ul>
+        </div>
+
+        <!-- Jam Layanan -->
+        <div>
+          <h4 class="text-sm font-bold uppercase tracking-wider text-white/90 mb-4">Jam Operasional</h4>
+          <ul class="space-y-3 text-sm text-white/70">
+            <li class="flex items-start gap-2.5">
+              <Clock class="w-4 h-4 text-brand-gold shrink-0 mt-0.5" />
+              <span>IGD, Ambulans & Farmasi: <strong class="text-white">24 Jam</strong></span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <Clock class="w-4 h-4 text-brand-gold shrink-0 mt-0.5" />
+              <span>Poliklinik Spesialis: Senin - Sabtu (07.00 - 21.00 WIB)</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <Clock class="w-4 h-4 text-brand-gold shrink-0 mt-0.5" />
+              <span>Medical Check Up: Senin - Sabtu (07.00 - 14.00 WIB)</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Kontak & Alamat -->
+        <div>
+          <h4 class="text-sm font-bold uppercase tracking-wider text-white/90 mb-4">Kontak & Lokasi</h4>
+          <ul class="space-y-3 text-sm text-white/70">
+            <li class="flex items-start gap-2.5">
+              <MapPin class="w-4 h-4 text-brand-gold shrink-0 mt-0.5" />
+              <span>{{ settings.address || 'Jl. Kesehatan Raya No. 88, Jakarta Selatan' }}</span>
+            </li>
+            <li class="flex items-center gap-2.5">
+              <Phone class="w-4 h-4 text-brand-gold shrink-0" />
+              <span>{{ settings.phone || '(021) 555-0199' }}</span>
+            </li>
+            <li class="flex items-center gap-2.5">
+              <Mail class="w-4 h-4 text-brand-gold shrink-0" />
+              <span>{{ settings.email || 'info@medikanusantara.id' }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/55">
+        <p>&copy; {{ new Date().getFullYear() }} {{ settings.site_name || 'RSU Medika Nusantara' }}. Hak Cipta Dilindungi.</p>
+        <div class="flex items-center gap-4">
+          <Link href="/login" class="hover:text-white transition-colors">Admin CMS</Link>
+        </div>
+      </div>
+    </div>
+  </footer>
 </template>

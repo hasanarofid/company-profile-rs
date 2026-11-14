@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    --brand-cream: 245 249 249;
+    --brand-sand: 230 242 242;
+    --brand-blush: 204 235 235;
+    --brand-dark: 10 61 74;
+    --brand-deep: 6 40 50;
+    --brand-primary: 13 110 110;
+    --brand-light: 20 140 140;
+    --brand-leaf: 71 107 115;
+    --brand-gold: 217 119 6;
+}

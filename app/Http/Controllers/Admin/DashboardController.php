@@ -3,27 +3,37 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\Page;
+use App\Models\Appointment;
+use App\Models\Career;
+use App\Models\CareerApplication;
+use App\Models\Department;
+use App\Models\Doctor;
 use App\Models\Post;
-use App\Models\Setting;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    /**
-     * Display the admin dashboard home.
-     */
-    public function index()
+    public function index(): Response
     {
         return Inertia::render('Admin/Dashboard', [
             'stats' => [
-                'users_count' => User::count(),
-                'pages_count' => Page::count(),
-                'posts_count' => Post::count(),
-                'settings_count' => Setting::count(),
+                'appointments_total' => Appointment::count(),
+                'appointments_pending' => Appointment::where('status', 'pending')->count(),
+                'doctors_active' => Doctor::where('is_active', true)->count(),
+                'departments_active' => Department::where('is_active', true)->count(),
+                'careers_active' => Career::where('is_active', true)->count(),
+                'applications_total' => CareerApplication::count(),
+                'articles_published' => Post::where('status', 'published')->count(),
             ],
-            'recent_posts' => Post::with('category')->latest()->take(5)->get(),
+            'recentAppointments' => Appointment::with(['department:id,name', 'doctor:id,name'])
+                ->latest()
+                ->take(5)
+                ->get(),
+            'recentApplications' => CareerApplication::with('career:id,title,category')
+                ->latest()
+                ->take(5)
+                ->get(),
         ]);
     }
 }

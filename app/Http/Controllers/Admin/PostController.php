@@ -51,7 +51,14 @@ class PostController extends Controller
         $validated['slug'] = Str::slug($validated['slug']);
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('posts', 'public');
+            $dir = public_path('uploads/posts');
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+            $file = $request->file('image');
+            $filename = Str::slug($validated['title']) . '-' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move($dir, $filename);
+            $validated['image'] = '/uploads/posts/' . $filename;
         }
 
         Post::create($validated);
@@ -90,11 +97,14 @@ class PostController extends Controller
         $validated['slug'] = Str::slug($validated['slug']);
 
         if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($post->image && Storage::disk('public')->exists($post->image)) {
-                Storage::disk('public')->delete($post->image);
+            $dir = public_path('uploads/posts');
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
             }
-            $validated['image'] = $request->file('image')->store('posts', 'public');
+            $file = $request->file('image');
+            $filename = Str::slug($validated['title']) . '-' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move($dir, $filename);
+            $validated['image'] = '/uploads/posts/' . $filename;
         } else {
             // Keep original image
             unset($validated['image']);

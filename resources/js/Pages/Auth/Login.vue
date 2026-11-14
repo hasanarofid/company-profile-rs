@@ -1,100 +1,95 @@
 <script setup>
-import Checkbox from '@/Components/Checkbox.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { ShieldPlus, Lock, Mail, ArrowLeft } from '@lucide/vue';
 
 defineProps({
-    canResetPassword: {
-        type: Boolean,
-    },
-    status: {
-        type: String,
-    },
+  canResetPassword: Boolean,
+  status: String,
 });
 
+const page = usePage();
+const settings = computed(() => page.props.siteSettings || {});
+
 const form = useForm({
-    email: '',
-    password: '',
-    remember: false,
+  email: 'admin@rsmedika.id',
+  password: 'password',
+  remember: false,
 });
 
 const submit = () => {
-    form.post(route('login'), {
-        onFinish: () => form.reset('password'),
-    });
+  form.post(route('login'), {
+    onFinish: () => form.reset('password'),
+  });
 };
 </script>
 
 <template>
-    <GuestLayout>
-        <Head title="Log in" />
+  <Head title="Login Admin Rumah Sakit" />
 
-        <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
-            {{ status }}
+  <div class="min-h-screen bg-brand-cream flex flex-col justify-center items-center p-4">
+    <div class="w-full max-w-md bg-white rounded-3xl border border-brand-sand shadow-fashion p-8 space-y-6">
+      <div class="text-center space-y-2">
+        <div class="w-14 h-14 rounded-2xl bg-brand-primary text-white flex items-center justify-center mx-auto shadow-sm">
+          <ShieldPlus class="w-8 h-8" />
+        </div>
+        <h1 class="text-2xl font-extrabold text-brand-dark">{{ settings.site_name || 'RSU Medika Nusantara' }}</h1>
+        <p class="text-xs text-brand-leaf">Portal Super Admin & Manajemen Konten Rumah Sakit</p>
+      </div>
+
+      <div v-if="status" class="p-3 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-medium">
+        {{ status }}
+      </div>
+
+      <form @submit.prevent="submit" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold uppercase text-brand-leaf mb-1">Email Admin</label>
+          <div class="relative">
+            <Mail class="w-4 h-4 text-brand-leaf absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              v-model="form.email"
+              type="email"
+              required
+              autofocus
+              class="w-full pl-10 pr-4 py-2.5 rounded-xl border-brand-sand bg-brand-cream/40 text-sm focus:border-brand-primary focus:ring-brand-primary"
+            />
+          </div>
+          <p v-if="form.errors.email" class="text-xs text-rose-600 mt-1">{{ form.errors.email }}</p>
         </div>
 
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
+        <div>
+          <label class="block text-xs font-bold uppercase text-brand-leaf mb-1">Password</label>
+          <div class="relative">
+            <Lock class="w-4 h-4 text-brand-leaf absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              v-model="form.password"
+              type="password"
+              required
+              class="w-full pl-10 pr-4 py-2.5 rounded-xl border-brand-sand bg-brand-cream/40 text-sm focus:border-brand-primary focus:ring-brand-primary"
+            />
+          </div>
+          <p v-if="form.errors.password" class="text-xs text-rose-600 mt-1">{{ form.errors.password }}</p>
+        </div>
 
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
+        <label class="inline-flex items-center gap-2 text-xs text-brand-leaf">
+          <input type="checkbox" v-model="form.remember" class="rounded border-brand-sand text-brand-primary" />
+          <span>Ingat sesi saya</span>
+        </label>
 
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
+        <button
+          type="submit"
+          :disabled="form.processing"
+          class="w-full py-3 rounded-xl bg-brand-primary hover:bg-brand-dark text-white font-bold text-sm shadow-sm transition-colors disabled:opacity-50"
+        >
+          {{ form.processing ? 'Memverifikasi...' : 'Masuk ke Panel Admin' }}
+        </button>
+      </form>
 
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="current-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="mt-4 block">
-                <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-xs font-medium text-brand-dark/75"
-                        >Ingat saya di perangkat ini</span
-                    >
-                </label>
-            </div>
-
-            <div class="mt-6 flex items-center justify-between pt-2 border-t border-brand-sand/60">
-                <Link
-                    v-if="canResetPassword"
-                    :href="route('password.request')"
-                    class="text-xs font-semibold text-brand-leaf hover:text-brand-dark transition-colors"
-                >
-                    Lupa kata sandi?
-                </Link>
-
-                <PrimaryButton
-                    class="ms-auto"
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Masuk ke Atelier
-                </PrimaryButton>
-            </div>
-        </form>
-    </GuestLayout>
+      <div class="pt-4 border-t border-brand-sand text-center">
+        <Link href="/" class="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-primary hover:text-brand-dark">
+          <ArrowLeft class="w-3.5 h-3.5" /> Kembali ke Website Utama
+        </Link>
+      </div>
+    </div>
+  </div>
 </template>

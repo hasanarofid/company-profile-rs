@@ -2,71 +2,91 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Post;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class ArticleController extends Controller
 {
-    /**
-     * Menampilkan editorial fashion, tips hijab & perawatan busana modest.
-     */
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $articles = collect([
-            [
-                'id' => 1,
-                'title' => 'Rahasia Merawat Gaun Berbahan Sutra & Ceruty Agar Tetap Berkilau Abadi',
-                'slug' => 'rahasia-merawat-gaun-sutra-ceruty',
-                'excerpt' => 'Panduan praktis mencuci, menyetrika, dan menyimpan busana pesta berbahan sutra alami tanpa merusak serat kain.',
-                'image_url' => '/images/products/atelier-craftsmanship.jpg',
-                'category' => ['name' => 'Fashion Care'],
-                'reading_time' => 3,
-                'published_at' => '02 Nov 2026',
-            ],
-            [
-                'id' => 2,
-                'title' => 'Inspirasi Padu-Padan Warna Burgundy & Blush untuk Tampilan Pesta yang Elegan',
-                'slug' => 'padu-padan-warna-burgundy-dan-blush',
-                'excerpt' => 'Kombinasi warna wine mewah dan sentuhan rose lembut menghasilkan harmoni visual yang anggun dan tidak mencolok.',
-                'image_url' => '/images/products/abaya-burgundy-luxe.jpg',
-                'category' => ['name' => 'Styling Tips'],
-                'reading_time' => 4,
-                'published_at' => '28 Okt 2026',
-            ],
-            [
-                'id' => 3,
-                'title' => '5 Siluet Abaya Modern yang Nyaman Digunakan untuk Travelling & Umrah',
-                'slug' => 'siluet-abaya-modern-untuk-travelling',
-                'excerpt' => 'Eksplorasi cutting longgar dengan saku tersembunyi dan material ringan anti-kusut yang ramah perjalanan jauh.',
-                'image_url' => '/images/products/collection-editorial-look.jpg',
-                'category' => ['name' => 'Travel & Modesty'],
-                'reading_time' => 5,
-                'published_at' => '20 Okt 2026',
-            ],
+        $query = Post::with('category:id,name,slug')
+            ->where('status', 'published');
+
+        if ($request->filled('category')) {
+            $catSlug = $request->string('category');
+            $query->whereHas('category', fn ($q) => $q->where('slug', $catSlug));
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->string('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('content', 'like', "%{$search}%");
+            });
+        }
+
+        $articles = $query->latest()->get()->map(fn ($post) => [
+            'id' => $post->id,
+            'title' => $post->title,
+            'slug' => $post->slug,
+            'excerpt' => str()->limit(strip_tags($post->content), 150),
+            'image' => $post->image ?: '/images/hospital/articles/health-checkup.jpg',
+            'category' => $post->category ? [
+                'name' => $post->category->name,
+                'slug' => $post->category->slug,
+            ] : ['name' => 'Kesehatan', 'slug' => 'kesehatan'],
+            'is_featured' => (bool) $post->is_featured,
+            'published_at' => $post->created_at?->translatedFormat('d M Y'),
         ]);
+
+        $categories = Category::orderBy('name')->get(['id', 'name', 'slug']);
 
         return Inertia::render('Articles/Index', [
             'articles' => $articles,
+            'categories' => $categories,
+            'filters' => [
+                'category' => $request->input('category', ''),
+                'search' => $request->input('search', ''),
+            ],
         ]);
     }
 
     public function show(string $slug): Response
     {
-        $article = [
-            'id' => 1,
-            'title' => 'Rahasia Merawat Gaun Berbahan Sutra & Ceruty Agar Tetap Berkilau Abadi',
-            'slug' => $slug,
-            'content' => 'Busana modest berbahan sutra dan ceruty baby doll memerlukan perhatian khusus saat pembersihan. Gunakan sabun berbahan lembut, hindari memeras berlebihan, dan selalu setrika pada suhu rendah dengan pelapis kain.',
-            'image_url' => '/images/products/atelier-craftsmanship.jpg',
-            'category' => ['name' => 'Fashion Care'],
-            'reading_time' => 3,
-            'published_at' => '02 Nov 2026',
-        ];
+        $post = Post::with('category:id,name,slug')
+            ->where('slug', $slug)
+            ->where('status', 'published')
+            ->firstOrFail();
+
+        $related = Post::with('category:id,name,slug')
+            ->where('id', '!=', $post->id)
+            ->where('status', 'published')
+            ->latest()
+            ->take(3)
+            ->get()
+            ->map(fn ($p) => [
+                'id' => $p->id,
+                'title' => $p->title,
+                'slug' => $p->slug,
+                'image' => $p->image ?: '/images/hospital/articles/health-checkup.jpg',
+                'category' => $p->category?->name ?? 'Kesehatan',
+                'published_at' => $p->created_at?->translatedFormat('d M Y'),
+            ]);
 
         return Inertia::render('Articles/Show', [
-            'article' => $article,
-            'relatedArticles' => collect([]),
+            'article' => [
+                'id' => $post->id,
+                'title' => $post->title,
+                'slug' => $post->slug,
+                'content' => $post->content,
+                'image' => $post->image ?: '/images/hospital/articles/health-checkup.jpg',
+                'category' => $post->category?->name ?? 'Kesehatan',
+                'published_at' => $post->created_at?->translatedFormat('d M Y'),
+            ],
+            'relatedArticles' => $related,
         ]);
     }
 }

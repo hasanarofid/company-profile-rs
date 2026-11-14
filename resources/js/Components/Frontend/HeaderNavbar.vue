@@ -1,211 +1,145 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
-import { Link } from '@inertiajs/vue3';
-import { MessageSquare, Menu, X, ShoppingBag, Sparkles, Heart } from 'lucide-vue-next';
+import { ref, computed } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import { Menu, X, CalendarCheck, PhoneCall, Clock, Cross, ShieldPlus } from '@lucide/vue';
 
-defineProps({
-    whatsappNumber: {
-        type: String,
-        default: '6281316053870'
-    },
-    brandName: {
-        type: String,
-        default: 'RÜYA'
-    }
-});
+const page = usePage();
+const settings = computed(() => page.props.siteSettings || {});
+const mobileOpen = ref(false);
 
-const isScrolled = ref(false);
-const mobileMenuOpen = ref(false);
-
-const checkScroll = () => {
-    isScrolled.value = window.scrollY > 30;
-};
-
-onMounted(() => {
-    window.addEventListener('scroll', checkScroll, { passive: true });
-});
-
-onUnmounted(() => {
-    window.removeEventListener('scroll', checkScroll);
-});
+const navLinks = [
+  { label: 'Beranda', href: '/', active: () => page.url === '/' },
+  { label: 'Dokter & Poli', href: '/dokter', active: () => page.url.startsWith('/dokter') },
+  { label: 'Artikel', href: '/artikel', active: () => page.url.startsWith('/artikel') },
+  { label: 'Karir', href: '/karir', active: () => page.url.startsWith('/karir') },
+  { label: 'Kontak', href: '/kontak', active: () => page.url.startsWith('/kontak') },
+];
 </script>
 
 <template>
-    <header 
-        class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-        :class="[
-            isScrolled 
-                ? 'bg-brand-cream/95 backdrop-blur-md shadow-sm border-b border-brand-dark/10 py-3' 
-                : 'bg-brand-cream/80 backdrop-blur-sm py-4'
-        ]"
+  <header class="sticky top-0 z-50 w-full">
+    <!-- Top Emergency & Info Bar -->
+    <div
+      v-if="settings.show_emergency_bar !== false"
+      class="bg-brand-deep text-white text-xs py-2 px-4 border-b border-white/10"
     >
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between">
-                
-                <!-- Brand Logo & Identity with Official Stamp -->
-                <Link :href="route('home')" class="group flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-xl bg-brand-sand border border-brand-dark/20 p-1 flex items-center justify-center shadow-sm transition-transform duration-300 group-hover:scale-105">
-                        <img 
-                            src="/images/ruya-logo.png" 
-                            alt="Logo RÜYA" 
-                            class="w-full h-full object-contain"
-                        />
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-serif text-2xl sm:text-3xl font-bold tracking-widest text-brand-dark leading-none group-hover:text-brand-primary transition-colors">
-                            RÜYA
-                        </span>
-                        <span class="text-[9px] sm:text-[10px] tracking-[0.25em] uppercase font-medium text-brand-dark/70 mt-1">
-                            Haute Modest Wear
-                        </span>
-                    </div>
-                </Link>
-
-                <!-- Desktop Navigation Menu -->
-                <nav class="hidden md:flex items-center gap-8">
-                    <Link 
-                        :href="route('home')" 
-                        class="text-sm font-medium text-brand-dark hover:text-brand-primary transition-colors relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-brand-primary after:transition-all"
-                    >
-                        Beranda
-                    </Link>
-                    <Link 
-                        :href="route('products.index')" 
-                        class="text-sm font-medium text-brand-dark hover:text-brand-primary transition-colors py-1 flex items-center gap-1"
-                    >
-                        <span>Koleksi Busana</span>
-                        <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-brand-sand text-brand-dark">New</span>
-                    </Link>
-                    <a 
-                        href="#about" 
-                        class="text-sm font-medium text-brand-dark hover:text-brand-primary transition-colors py-1"
-                    >
-                        Filosofi
-                    </a>
-                    <Link 
-                        :href="route('portfolios.index')" 
-                        class="text-sm font-medium text-brand-dark hover:text-brand-primary transition-colors py-1"
-                    >
-                        Lookbook
-                    </Link>
-                    <Link 
-                        :href="route('articles.index')" 
-                        class="text-sm font-medium text-brand-dark hover:text-brand-primary transition-colors py-1"
-                    >
-                        Journal
-                    </Link>
-                    <Link 
-                        :href="route('contact.index')" 
-                        class="text-sm font-medium text-brand-dark hover:text-brand-primary transition-colors py-1"
-                    >
-                        Butik & Kontak
-                    </Link>
-                </nav>
-
-                <!-- Action Button Desktop -->
-                <div class="hidden lg:flex items-center gap-4">
-                    <a 
-                        :href="`https://wa.me/${whatsappNumber}?text=Halo%20R%C3%9CYA,%20saya%20ingin%20berkonsultasi%20mengenai%20koleksi%20busana%20terbaru.`"
-                        target="_blank"
-                        class="group relative inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-brand-dark text-brand-cream hover:bg-brand-primary transition-all duration-300 shadow-md hover:shadow-lg font-medium text-xs tracking-wide"
-                    >
-                        <MessageSquare class="w-4 h-4 text-brand-sand transition-transform group-hover:scale-110" />
-                        <span>Personal Shopper</span>
-                    </a>
-                </div>
-
-                <!-- Mobile Action & Hamburger -->
-                <div class="flex items-center gap-2 md:hidden">
-                    <a 
-                        :href="`https://wa.me/${whatsappNumber}?text=Halo%20R%C3%9CYA,%20saya%20tertarik%20dengan%20koleksi%20busana%20Anda.`"
-                        target="_blank"
-                        class="p-2 rounded-lg bg-brand-dark text-brand-cream font-bold text-xs"
-                    >
-                        <MessageSquare class="w-4 h-4" />
-                    </a>
-                    <button 
-                        @click="mobileMenuOpen = !mobileMenuOpen"
-                        type="button" 
-                        class="p-2 rounded-lg text-brand-dark hover:bg-brand-sand transition-colors"
-                        aria-label="Toggle Navigation"
-                    >
-                        <Menu v-if="!mobileMenuOpen" class="w-6 h-6" />
-                        <X v-else class="w-6 h-6" />
-                    </button>
-                </div>
-            </div>
-
-            <!-- Mobile Drawer -->
-            <transition
-                enter-active-class="transition duration-200 ease-out"
-                enter-from-class="opacity-0 -translate-y-2"
-                enter-to-class="opacity-100 translate-y-0"
-                leave-active-class="transition duration-150 ease-in"
-                leave-from-class="opacity-100 translate-y-0"
-                leave-to-class="opacity-0 -translate-y-2"
-            >
-                <div 
-                    v-if="mobileMenuOpen" 
-                    class="md:hidden mt-4 pt-4 pb-6 border-t border-brand-dark/10 bg-brand-sand/95 backdrop-blur-md rounded-2xl p-5 shadow-xl space-y-4"
-                >
-                    <nav class="flex flex-col space-y-3">
-                        <Link 
-                            :href="route('home')" 
-                            @click="mobileMenuOpen = false"
-                            class="text-base font-medium text-brand-dark hover:text-brand-primary px-2 py-1.5 rounded-md"
-                        >
-                            Beranda
-                        </Link>
-                        <Link 
-                            :href="route('products.index')" 
-                            @click="mobileMenuOpen = false"
-                            class="text-base font-medium text-brand-dark hover:text-brand-primary px-2 py-1.5 rounded-md flex items-center justify-between"
-                        >
-                            <span>Koleksi Busana</span>
-                            <span class="text-xs px-2 py-0.5 rounded-full bg-brand-dark text-brand-cream">Katalog</span>
-                        </Link>
-                        <a 
-                            href="#about" 
-                            @click="mobileMenuOpen = false"
-                            class="text-base font-medium text-brand-dark hover:text-brand-primary px-2 py-1.5 rounded-md"
-                        >
-                            Filosofi & Kain
-                        </a>
-                        <Link 
-                            :href="route('portfolios.index')" 
-                            @click="mobileMenuOpen = false"
-                            class="text-base font-medium text-brand-dark hover:text-brand-primary px-2 py-1.5 rounded-md"
-                        >
-                            Lookbook & Gaya
-                        </Link>
-                        <Link 
-                            :href="route('articles.index')" 
-                            @click="mobileMenuOpen = false"
-                            class="text-base font-medium text-brand-dark hover:text-brand-primary px-2 py-1.5 rounded-md"
-                        >
-                            Journal & Tips
-                        </Link>
-                        <Link 
-                            :href="route('contact.index')" 
-                            @click="mobileMenuOpen = false"
-                            class="text-base font-medium text-brand-dark hover:text-brand-primary px-2 py-1.5 rounded-md"
-                        >
-                            Butik & Konsultasi
-                        </Link>
-                    </nav>
-
-                    <div class="pt-2 border-t border-brand-dark/10">
-                        <a 
-                            :href="`https://wa.me/${whatsappNumber}?text=Halo%20R%C3%9CYA,%20saya%20ingin%20konsultasi%20busana%20modest.`"
-                            target="_blank"
-                            class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-brand-dark text-brand-cream font-medium text-sm shadow-md"
-                        >
-                            <MessageSquare class="w-4 h-4 text-brand-sand" />
-                            <span>Pesan via WhatsApp Personal Shopper</span>
-                        </a>
-                    </div>
-                </div>
-            </transition>
+      <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-4 flex-wrap">
+          <a
+            :href="`tel:${settings.emergency_phone || '021500911'}`"
+            class="inline-flex items-center gap-1.5 font-semibold text-rose-300 hover:text-white transition-colors"
+          >
+            <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+            <span>IGD 24 Jam: {{ settings.emergency_phone || '(021) 500-911' }}</span>
+          </a>
+          <span class="hidden sm:inline-flex items-center gap-1.5 text-white/80">
+            <Clock class="w-3.5 h-3.5 text-brand-gold" />
+            {{ settings.working_hours || 'IGD 24 Jam | Poli: Senin - Sabtu 07.00 - 21.00' }}
+          </span>
         </div>
-    </header>
+        <div class="hidden md:flex items-center gap-4 text-white/80">
+          <a :href="`tel:${settings.phone}`" class="hover:text-white inline-flex items-center gap-1">
+            <PhoneCall class="w-3.5 h-3.5" />
+            <span>{{ settings.phone || '(021) 555-0199' }}</span>
+          </a>
+          <Link href="/login" class="hover:text-white text-white/70 transition-colors">
+            Portal Admin
+          </Link>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Navbar -->
+    <nav class="bg-white/95 backdrop-blur-md border-b border-brand-sand shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+        <!-- Brand Logo -->
+        <Link href="/" class="flex items-center gap-3 shrink-0">
+          <img
+            v-if="settings.site_logo_url"
+            :src="settings.site_logo_url"
+            :alt="settings.site_name"
+            class="h-11 w-auto object-contain"
+          />
+          <div
+            v-else
+            class="w-11 h-11 rounded-xl bg-brand-primary text-white flex items-center justify-center shadow-sm"
+          >
+            <ShieldPlus class="w-6 h-6" />
+          </div>
+          <div>
+            <span class="block text-base sm:text-lg font-bold tracking-tight text-brand-dark leading-tight">
+              {{ settings.site_name || 'RSU Medika Nusantara' }}
+            </span>
+            <span class="block text-[11px] font-medium text-brand-leaf tracking-wide">
+              Pelayanan Medis Terpadu
+            </span>
+          </div>
+        </Link>
+
+        <!-- Desktop Links -->
+        <div class="hidden lg:flex items-center gap-7">
+          <Link
+            v-for="item in navLinks"
+            :key="item.href"
+            :href="item.href"
+            :class="[
+              item.active()
+                ? 'text-brand-primary font-semibold'
+                : 'text-brand-dark/80 hover:text-brand-primary font-medium',
+              'text-sm transition-colors'
+            ]"
+          >
+            {{ item.label }}
+          </Link>
+        </div>
+
+        <!-- CTA + Mobile Toggle -->
+        <div class="flex items-center gap-3">
+          <Link
+            href="/janji-temu"
+            class="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-primary hover:bg-brand-dark text-white text-sm font-semibold shadow-sm transition-all"
+          >
+            <CalendarCheck class="w-4 h-4" />
+            <span>Buat Janji Temu</span>
+          </Link>
+
+          <button
+            @click="mobileOpen = !mobileOpen"
+            class="lg:hidden p-2 rounded-xl border border-brand-sand text-brand-dark hover:bg-brand-sand/50"
+            aria-label="Toggle Menu"
+          >
+            <X v-if="mobileOpen" class="w-6 h-6" />
+            <Menu v-else class="w-6 h-6" />
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div
+        v-if="mobileOpen"
+        class="lg:hidden bg-white border-t border-brand-sand px-4 py-4 space-y-2 shadow-lg"
+      >
+        <Link
+          v-for="item in navLinks"
+          :key="item.href"
+          :href="item.href"
+          @click="mobileOpen = false"
+          :class="[
+            item.active() ? 'bg-brand-sand text-brand-primary font-semibold' : 'text-brand-dark hover:bg-brand-cream',
+            'block px-4 py-2.5 rounded-xl text-sm'
+          ]"
+        >
+          {{ item.label }}
+        </Link>
+        <Link
+          href="/janji-temu"
+          @click="mobileOpen = false"
+          class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-brand-primary text-white text-sm font-semibold mt-2"
+        >
+          <CalendarCheck class="w-4 h-4" />
+          <span>Buat Janji Temu Dokter</span>
+        </Link>
+      </div>
+    </nav>
+  </header>
 </template>

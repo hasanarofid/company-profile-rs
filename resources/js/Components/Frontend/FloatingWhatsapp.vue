@@ -1,27 +1,26 @@
 <script setup>
-import { MessageSquare } from 'lucide-vue-next';
+import { computed } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+import { MessageCircle } from '@lucide/vue';
 
-defineProps({
-    whatsappNumber: {
-        type: String,
-        default: '6281316053870'
-    }
+const page = usePage();
+const settings = computed(() => page.props.siteSettings || {});
+const waUrl = computed(() => {
+  const num = (settings.value.whatsapp_number || '6281234567890').replace(/[^0-9]/g, '');
+  const text = encodeURIComponent(`Halo ${settings.value.site_name || 'RSU Medika Nusantara'}, saya ingin menanyakan informasi layanan & jadwal dokter.`);
+  return `https://wa.me/${num}?text=${text}`;
 });
 </script>
 
 <template>
-    <aside 
-        class="fixed bottom-6 right-6 z-40"
-        aria-label="Personal Shopper WhatsApp"
-    >
-        <a 
-            :href="`https://wa.me/${whatsappNumber}?text=Halo%20R%C3%9CYA,%20saya%20tertarik%20dengan%20koleksi%20busana%20modest%20Anda.`"
-            target="_blank"
-            class="group flex items-center gap-2.5 px-4 py-3 rounded-full bg-brand-dark text-brand-cream border border-brand-sand/30 shadow-2xl hover:bg-brand-primary transition-all duration-300 hover:scale-105"
-        >
-            <div class="w-2.5 h-2.5 rounded-full bg-brand-sand animate-pulse"></div>
-            <MessageSquare class="w-4 h-4 text-brand-sand" />
-            <span class="text-xs font-semibold tracking-wide hidden sm:inline">Chat Stylist</span>
-        </a>
-    </aside>
+  <a
+    :href="waUrl"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="fixed bottom-6 right-6 z-40 inline-flex items-center gap-2.5 px-4 py-3 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 group"
+    aria-label="Hubungi WhatsApp Rumah Sakit"
+  >
+    <MessageCircle class="w-5 h-5" />
+    <span class="text-sm font-semibold hidden sm:inline">Tanya CS / WhatsApp</span>
+  </a>
 </template>

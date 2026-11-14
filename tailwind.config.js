@@ -14,34 +14,27 @@ export default {
         extend: {
             colors: {
                 brand: {
-                    // Surfaces & Backgrounds
-                    cream: '#FAF7F2',       // Warm ecru / off-white background utama
-                    sand: '#F7E7EB',        // Soft dusty rose / blush tint untuk alternate card & bento
-                    blush: '#F4D6DC',       // Romantic blush accent
-                    
-                    // Deep Accent & Logo Burgundy
-                    dark: '#530A1E',        // Deep Royal Burgundy / Wine khas logo RÜYA
-                    deep: '#3D0716',        // Darker burgundy untuk footer & high contrast
-                    
-                    // Primary Fashion Accents
-                    primary: '#6B1D2F',     // Noble Burgundy untuk button & link hover
-                    light: '#8C3147',       // Rose-wine untuk border & tag
-                    
-                    // Highlights & Secondary
-                    leaf: '#A85165',        // Soft berry-rose
-                    gold: '#D4AF37',        // Subtle metallic gold touch untuk aksen couture
-                    cta: '#530A1E',         // CTA utama: deep elegant burgundy dengan teks cream
-                    ctaHover: '#3D0716',
+                    cream: 'rgb(var(--brand-cream) / <alpha-value>)',
+                    sand: 'rgb(var(--brand-sand) / <alpha-value>)',
+                    blush: 'rgb(var(--brand-blush) / <alpha-value>)',
+                    dark: 'rgb(var(--brand-dark) / <alpha-value>)',
+                    deep: 'rgb(var(--brand-deep) / <alpha-value>)',
+                    primary: 'rgb(var(--brand-primary) / <alpha-value>)',
+                    light: 'rgb(var(--brand-light) / <alpha-value>)',
+                    leaf: 'rgb(var(--brand-leaf) / <alpha-value>)',
+                    gold: 'rgb(var(--brand-gold) / <alpha-value>)',
+                    cta: 'rgb(var(--brand-primary) / <alpha-value>)',
+                    ctaHover: 'rgb(var(--brand-dark) / <alpha-value>)',
                 },
             },
             fontFamily: {
-                serif: ['"Playfair Display"', 'Cormorant Garamond', 'Georgia', ...defaultTheme.fontFamily.serif],
+                serif: ['"Plus Jakarta Sans"', '"DM Sans"', ...defaultTheme.fontFamily.sans],
                 sans: ['"Plus Jakarta Sans"', '"DM Sans"', ...defaultTheme.fontFamily.sans],
             },
             boxShadow: {
-                'fashion': '0 20px 45px -15px rgba(83, 10, 30, 0.08)',
-                'card-hover': '0 25px 50px -12px rgba(83, 10, 30, 0.16)',
-                'cta-glow': '0 10px 30px -5px rgba(83, 10, 30, 0.35)',
+                'fashion': '0 20px 45px -15px rgba(10, 61, 74, 0.08)',
+                'card-hover': '0 25px 50px -12px rgba(10, 61, 74, 0.14)',
+                'cta-glow': '0 10px 30px -5px rgba(13, 110, 110, 0.35)',
             },
         },
     },
