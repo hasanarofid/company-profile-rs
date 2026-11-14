@@ -48,7 +48,7 @@ const handleDelete = (item) => {
 </script>
 
 <template>
-  <Head title="Kelola Halaman & Seksi — RÜYA" />
+  <Head title="Layout & Halaman Website" />
 
   <AdminLayout>
     <div class="space-y-8">
@@ -56,18 +56,18 @@ const handleDelete = (item) => {
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-brand-leaf mb-1">
-            <Sparkles class="w-4 h-4 text-brand-gold" />
+            <Sparkles class="w-4 h-4 text-brand-primary" />
             <span>Dynamic Layout Architecture</span>
           </div>
-          <h2 class="text-3xl font-serif font-bold tracking-tight text-brand-dark">Halaman & Seksi Konten</h2>
-          <p class="text-sm text-brand-leaf/80 mt-1">Kelola struktur landing page dinamis, hero banner, dan lookbook bento butik.</p>
+          <h2 class="text-3xl font-bold tracking-tight text-brand-dark">Layout & Seksi Konten</h2>
+          <p class="text-sm text-brand-leaf/80 mt-1">Kelola struktur halaman utama rumah sakit, urutan komponen, dan konten visual.</p>
         </div>
         <div>
           <button 
             @click="isModalOpen = true"
-            class="inline-flex items-center px-5 py-2.5 bg-brand-dark hover:bg-brand-deep border border-brand-gold/30 text-xs font-semibold uppercase tracking-widest text-brand-cream rounded-xl shadow-md transition-all cursor-pointer"
+            class="inline-flex items-center px-5 py-2.5 bg-brand-primary hover:bg-brand-dark text-xs font-semibold uppercase tracking-widest text-white rounded-xl shadow-md transition-all cursor-pointer"
           >
-            <Plus class="w-4 h-4 mr-1.5 text-brand-gold" />
+            <Plus class="w-4 h-4 mr-1.5" />
             Tambah Halaman
           </button>
         </div>

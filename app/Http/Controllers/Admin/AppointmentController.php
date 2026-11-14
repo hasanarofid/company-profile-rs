@@ -58,3 +58,4 @@ class AppointmentController extends Controller
         return back()->with('success', 'Data janji temu berhasil dihapus.');
     }
 }
+

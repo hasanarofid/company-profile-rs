@@ -87,3 +87,4 @@ class CareerController extends Controller
         return back()->with('success', 'Lamaran Anda untuk posisi ' . $career->title . ' berhasil dikirim. Tim HRD kami akan menghubungi Anda.');
     }
 }
+

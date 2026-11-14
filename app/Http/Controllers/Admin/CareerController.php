@@ -92,3 +92,4 @@ class CareerController extends Controller
         return back()->with('success', 'Status pelamar ' . $application->applicant_name . ' diperbarui.');
     }
 }
+

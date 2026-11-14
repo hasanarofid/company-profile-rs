@@ -19,8 +19,8 @@ const props = defineProps({
 const isCategoryModalOpen = ref(false);
 
 const headers = [
-  { text: 'Judul Busana / Artikel', value: 'title' },
-  { text: 'Kategori Koleksi', value: 'category_name' },
+  { text: 'Judul Artikel / Berita', value: 'title' },
+  { text: 'Kategori', value: 'category_name' },
   { text: 'Status', value: 'status', type: 'badge' },
   { text: 'Tanggal Publikasi', value: 'created_at', type: 'date' }
 ];
@@ -28,7 +28,7 @@ const headers = [
 // Map posts to include flat category name for table search/display
 const tableItems = props.posts.map(p => ({
   ...p,
-  category_name: p.category?.name || 'Koleksi Umum'
+  category_name: p.category?.name || 'Umum'
 }));
 
 const categoryForm = useForm({
@@ -62,7 +62,7 @@ const handleDelete = (item) => {
 </script>
 
 <template>
-  <Head title="Katalog & Postingan — RÜYA" />
+  <Head title="Artikel & Berita Rumah Sakit" />
 
   <AdminLayout>
     <div class="space-y-8">
@@ -70,11 +70,11 @@ const handleDelete = (item) => {
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-brand-leaf mb-1">
-            <Sparkles class="w-4 h-4 text-brand-gold" />
-            <span>Haute Couture Collection Manager</span>
+            <Sparkles class="w-4 h-4 text-brand-primary" />
+            <span>Manajemen Edukasi & Informasi RS</span>
           </div>
-          <h2 class="text-3xl font-serif font-bold tracking-tight text-brand-dark">Katalog & Postingan</h2>
-          <p class="text-sm text-brand-leaf/80 mt-1">Kelola katalog busana abaya, gaun pesta, pashmina, dan jurnal fashion RÜYA.</p>
+          <h2 class="text-3xl font-bold tracking-tight text-brand-dark">Artikel & Berita Kesehatan</h2>
+          <p class="text-sm text-brand-leaf/80 mt-1">Kelola artikel tips kesehatan, berita kegiatan rumah sakit, dan pengumuman resmi.</p>
         </div>
         <div class="flex items-center gap-3">
           <button 
@@ -86,10 +86,10 @@ const handleDelete = (item) => {
           </button>
           <Link 
             :href="route('admin.posts.create')"
-            class="inline-flex items-center px-5 py-2.5 bg-brand-dark hover:bg-brand-deep border border-brand-gold/30 text-xs font-semibold uppercase tracking-widest text-brand-cream rounded-xl shadow-md transition-all cursor-pointer"
+            class="inline-flex items-center px-5 py-2.5 bg-brand-primary hover:bg-brand-dark text-xs font-semibold uppercase tracking-widest text-white rounded-xl shadow-md transition-all cursor-pointer"
           >
-            <Plus class="w-4 h-4 mr-1.5 text-brand-gold" />
-            Tambah Busana
+            <Plus class="w-4 h-4 mr-1.5" />
+            Tambah Artikel
           </Link>
         </div>
       </div>
@@ -100,7 +100,7 @@ const handleDelete = (item) => {
           <DataTable 
             :items="tableItems" 
             :headers="headers" 
-            search-placeholder="Cari judul busana atau artikel..."
+            search-placeholder="Cari judul artikel atau berita..."
             search-key="title"
             @edit="handleEdit"
             @delete="handleDelete"
@@ -108,8 +108,8 @@ const handleDelete = (item) => {
         </div>
 
         <!-- Categories Sidebar Card -->
-        <div class="lg:col-span-1 bg-white border border-brand-sand/80 rounded-3xl p-6 shadow-fashion space-y-4">
-          <h3 class="text-xs font-bold text-brand-dark uppercase tracking-widest pb-3 border-b border-brand-sand/60">Kategori Koleksi</h3>
+        <div class="lg:col-span-1 bg-white border border-brand-sand/80 rounded-3xl p-6 shadow-sm space-y-4">
+          <h3 class="text-xs font-bold text-brand-dark uppercase tracking-widest pb-3 border-b border-brand-sand/60">Kategori Artikel</h3>
           <div class="space-y-2 max-h-96 overflow-y-auto pr-1">
             <div 
               v-for="cat in categories" 
@@ -118,7 +118,7 @@ const handleDelete = (item) => {
             >
               <div>
                 <p class="font-bold text-brand-dark">{{ cat.name }}</p>
-                <p class="text-[10px] text-brand-leaf/70 mt-0.5">{{ cat.posts_count }} item busana</p>
+                <p class="text-[10px] text-brand-leaf/70 mt-0.5">{{ cat.posts_count }} artikel</p>
               </div>
               <button 
                 @click="deleteCategory(cat)"
@@ -129,7 +129,7 @@ const handleDelete = (item) => {
               </button>
             </div>
             <div v-if="categories.length === 0" class="text-center py-6 text-brand-leaf/60 text-xs">
-              Belum ada kategori koleksi.
+              Belum ada kategori artikel.
             </div>
           </div>
         </div>
@@ -140,7 +140,7 @@ const handleDelete = (item) => {
         <div @click="isCategoryModalOpen = false" class="fixed inset-0 bg-brand-deep/70 backdrop-blur-sm"></div>
         <div class="relative bg-white border border-brand-sand rounded-3xl max-w-sm w-full overflow-hidden shadow-2xl z-10">
           <div class="flex items-center justify-between px-6 py-5 border-b border-brand-sand bg-brand-sand/20">
-            <h3 class="text-base font-serif font-bold text-brand-dark">Kategori Busana Baru</h3>
+            <h3 class="text-base font-bold text-brand-dark">Kategori Artikel Baru</h3>
             <button @click="isCategoryModalOpen = false" class="p-1.5 text-brand-leaf hover:text-brand-dark rounded-lg hover:bg-brand-sand/50 transition-colors">
               <X class="w-5 h-5" />
             </button>
@@ -154,7 +154,7 @@ const handleDelete = (item) => {
                 type="text" 
                 required
                 class="w-full bg-brand-cream/70 border border-brand-sand rounded-xl px-4 py-2.5 text-sm text-brand-dark placeholder-brand-leaf/40 focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/15 transition-all duration-200"
-                placeholder="Contoh: Abaya & Dress, Pashmina"
+                placeholder="Contoh: Tips Kesehatan, Pengumuman"
               />
               <div v-if="categoryForm.errors.name" class="text-xs text-rose-600 font-semibold">{{ categoryForm.errors.name }}</div>
             </div>

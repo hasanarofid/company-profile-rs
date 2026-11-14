@@ -32,3 +32,4 @@ class DoctorSchedule extends Model
         return $this->belongsTo(Doctor::class);
     }
 }
+

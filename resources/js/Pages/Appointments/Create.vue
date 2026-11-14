@@ -345,3 +345,4 @@ const whatsappConfirmUrl = computed(() => {
     <FloatingWhatsapp />
   </div>
 </template>
+

@@ -228,3 +228,4 @@ const updateAppStatus = (app, status) => {
     </div>
   </AdminLayout>
 </template>
+

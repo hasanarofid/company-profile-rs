@@ -28,3 +28,4 @@ class CareerApplication extends Model
         return $this->belongsTo(Career::class);
     }
 }
+

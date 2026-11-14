@@ -63,7 +63,7 @@ const submit = () => {
 </script>
 
 <template>
-  <Head :title="isEdit ? 'Edit Busana / Postingan — RÜYA' : 'Tambah Busana Baru — RÜYA'" />
+  <Head :title="isEdit ? 'Edit Artikel / Berita' : 'Tambah Artikel Baru'" />
 
   <AdminLayout>
     <div class="space-y-8 max-w-4xl">
@@ -77,32 +77,32 @@ const submit = () => {
         </Link>
         <div>
           <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-brand-leaf mb-0.5">
-            <Sparkles class="w-3.5 h-3.5 text-brand-gold" />
-            <span>Haute Modest Wardrobe Management</span>
+            <Sparkles class="w-3.5 h-3.5 text-brand-primary" />
+            <span>Manajemen Artikel & Edukasi RS</span>
           </div>
-          <h2 class="text-3xl font-serif font-bold tracking-tight text-brand-dark">
-            {{ isEdit ? 'Edit Busana / Postingan' : 'Tambah Busana Baru' }}
+          <h2 class="text-3xl font-bold tracking-tight text-brand-dark">
+            {{ isEdit ? 'Edit Artikel / Berita' : 'Tambah Artikel Baru' }}
           </h2>
           <p class="text-sm text-brand-leaf/80 mt-0.5">
-            {{ isEdit ? 'Perbarui konten artikel, foto, atau spesifikasi busana modest Anda.' : 'Unggah busana, deskripsi material sutra/linen, atau artikel journal baru.' }}
+            {{ isEdit ? 'Perbarui konten artikel kesehatan, berita rumah sakit, atau foto sampul.' : 'Terbitkan artikel tips kesehatan, berita kegiatan RS, atau pengumuman baru.' }}
           </p>
         </div>
       </div>
 
       <!-- Form Card -->
-      <form @submit.prevent="submit" class="bg-white border border-brand-sand/80 rounded-3xl overflow-hidden shadow-fashion">
+      <form @submit.prevent="submit" class="bg-white border border-brand-sand/80 rounded-3xl overflow-hidden shadow-sm">
         <div class="p-6 md:p-8 space-y-6">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Title -->
             <div class="space-y-1 md:col-span-2">
-              <label for="title" class="text-xs font-bold text-brand-dark/80 uppercase tracking-wider">Nama Busana / Judul Postingan</label>
+              <label for="title" class="text-xs font-bold text-brand-dark/80 uppercase tracking-wider">Judul Artikel / Berita</label>
               <input 
                 id="title"
                 v-model="form.title"
                 type="text" 
                 required
                 class="w-full bg-brand-cream/70 border border-brand-sand rounded-xl px-4 py-2.5 text-sm text-brand-dark placeholder-brand-leaf/40 focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/15 transition-all duration-200"
-                placeholder="Contoh: Royal Silk Abaya with Embroidered Cuffs"
+                placeholder="Contoh: Pentingnya Medical Check Up Rutin Setiap Tahun"
                 @input="!isEdit && (form.slug = form.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''))"
               />
               <div v-if="form.errors.title" class="text-xs text-rose-600 font-semibold">{{ form.errors.title }}</div>
@@ -117,7 +117,7 @@ const submit = () => {
                 type="text" 
                 required
                 class="w-full bg-brand-cream/70 border border-brand-sand rounded-xl px-4 py-2.5 text-sm text-brand-dark placeholder-brand-leaf/40 focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/15 transition-all duration-200"
-                placeholder="royal-silk-abaya"
+                placeholder="pentingnya-medical-check-up-rutin"
               />
               <div v-if="form.errors.slug" class="text-xs text-rose-600 font-semibold">{{ form.errors.slug }}</div>
             </div>

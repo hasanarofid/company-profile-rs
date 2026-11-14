@@ -36,3 +36,4 @@ class Career extends Model
         return $this->hasMany(CareerApplication::class);
     }
 }
+

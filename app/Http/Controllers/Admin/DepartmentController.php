@@ -120,3 +120,4 @@ class DepartmentController extends Controller
         return '/uploads/' . $folder . '/' . $filename;
     }
 }
+

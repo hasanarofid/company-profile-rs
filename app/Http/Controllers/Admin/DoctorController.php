@@ -175,3 +175,4 @@ class DoctorController extends Controller
         return $slug;
     }
 }
+

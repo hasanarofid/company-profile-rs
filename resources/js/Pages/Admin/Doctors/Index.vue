@@ -211,3 +211,4 @@ const remove = (id) => {
     </div>
   </AdminLayout>
 </template>
+

@@ -48,3 +48,4 @@ class Doctor extends Model
         return $this->hasMany(Appointment::class);
     }
 }
+
